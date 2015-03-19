@@ -37,8 +37,8 @@ sudoers:
     - user: someone    # user name
 	  super: True      # can sudo root - default to sudoers_super
 	  template: simple # template file - default to sudoers_template
-	  env_keep:
-		  - [ HOME ]   # list of environment variable to keep - default to sudoers_envkeep
+	  env_keep: 
+		  - HOME       # list of environment variable to keep - default to sudoers_envkeep
     - &thy
       user: thy
       env_keep:
