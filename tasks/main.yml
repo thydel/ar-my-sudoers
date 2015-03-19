@@ -1,2 +1,20 @@
+# -*- Mode: YAML; indent-tabs-mode: nil; fill-column: 96; -*-
+
 ---
-# tasks file for /home/thy/usr/thydel/ar-my-sudoers
+
+- name: sudoers - apt
+  apt: name={{ item }}
+  when: ansible_distribution == 'Debian'
+  with_items: [ sudo ]
+
+- name: sudoers - add file in sudoers.d
+  template:
+    src={{ item.template | default(sudoers_template) }}.j2
+    dest=/etc/sudoers.d/{{ item.user }}
+    mode=0440
+  with_items: sudoers.active
+
+- name: sudoers - add user in sudo group
+  user: name={{ item.user }} groups=sudo append=yes
+  with_items: sudoers.active
+  when: ansible_distribution == 'Ubuntu' and item.super | default(sudoers_super)

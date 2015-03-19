@@ -1,38 +1,65 @@
-Role Name
-=========
+# [Install my-sudoers with Ansible](https://github.com/thydel/ar-my-suoders)
 
-A brief description of the role goes here.
+- Install an admin sudoers user file in sudoers.d
+- Give root power via sudoers on Debian
+- Give root power via sudo group on Ubuntu
+- Set per user env_keep
 
-Requirements
-------------
+## note
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- Not designed as a generic role
+- Fit my needs
+- Starting point, but
+  - Easy to extend sudoers user dict
+  - Easy to add more template using more sudoers user dict params
 
-Role Variables
---------------
+## Usage
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Install via [Galaxy](https://galaxy.ansibleworks.com/):
 
-Dependencies
-------------
+```
+ansible-galaxy install thydel.my-sudoers
+```
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Role Default Variables
 
-Example Playbook
-----------------
+```yaml
+sudoers_super: True
+sudoers_template: default
+sudoers_envkeep: []
+```
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Role Variables
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```yaml
+sudoers:
+  users:
+    - user: someone    # user name
+	  super: True      # can sudo root - default to sudoers_super
+	  template: simple # template file - default to sudoers_template
+	  env_keep:
+		  - [ HOME ]   # list of environment variable to keep - default to sudoers_envkeep
+    - &thy
+      user: thy
+      env_keep:
+        - HOME
+    - &cedric
+      user: cedric
+  active:
+    - *thy
+```
 
-License
--------
+## Example Playbook
 
-BSD
+```yaml
+- hosts: all
+   roles:
+	- thydel.my-sudoers
+```
 
-Author Information
-------------------
+## WARNING
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+- Maybe using group for Ubuntu was not a goot idea
+ - I found no simple way to remove a user from a group using user module
+ - If a user.super change from True to False, user keep ability to sudo root
+ 
