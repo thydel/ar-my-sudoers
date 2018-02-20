@@ -1,0 +1,9 @@
+##  -*- Mode: jinja2; -*-
+
+{% for env_keep in item.env_keep | default(suoders_envkeep) %}
+Defaults:{{ item.user }} env_keep += {{ env_keep }}
+{% endfor %}
+
+{% if ansible_distribution == 'Debian' and item.super | default(sudoers_super) %}
+{{ item.user }} ALL=(ALL) ALL
+{% endif %}
